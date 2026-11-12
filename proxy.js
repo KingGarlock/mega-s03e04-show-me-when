@@ -4,6 +4,7 @@ const BOARD_ORIGIN = 'https://kinggarlock.github.io';
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    url.pathname = url.pathname.replace(/^\/api(?=\/)/, '');
     const origin = request.headers.get('Origin');
     const headers = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'Vary': 'Origin' };
     if (origin === BOARD_ORIGIN) headers['Access-Control-Allow-Origin'] = origin;
