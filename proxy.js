@@ -22,7 +22,7 @@ export default {
     }
     if (url.pathname === '/ack' && !upstream.searchParams.has('id')) return respond({error:'Incident ID required'},400);
     try {
-      const response = await fetch(upstream,{redirect:'error',headers:{Accept:'application/json'}});
+      const response = await fetch(upstream,{redirect:'manual',headers:{Accept:'application/json'}});
       if (!response.ok) return respond({error:'Course API request failed'},response.status);
       const body = await response.json();
       // Return only the documented response fields; never forward credentials or headers.
