@@ -4,10 +4,39 @@ const list = document.querySelector('[data-testid="incident-list"]');
 const loader = document.querySelector('[data-testid="loader"]');
 const empty = document.querySelector('[data-testid="empty"]');
 const status = document.querySelector('[role="status"]');
+const confirmation = document.querySelector('[data-testid="confirm"]');
+const confirmationText = document.querySelector('#confirm-description');
 const acknowledged = new Map();
 const pending = new Set();
+let confirmationTarget = null;
 let incidents = [];
 let loading = false;
+
+function closeConfirmation() {
+  confirmationTarget = null;
+  confirmation.close();
+}
+
+confirmation.querySelector('[data-testid="confirm-cancel"]').addEventListener('click', closeConfirmation);
+confirmation.addEventListener('cancel', () => { confirmationTarget = null; });
+confirmation.querySelector('[data-testid="confirm-ack"]').addEventListener('click', async () => {
+  const id = confirmationTarget;
+  if (!id || pending.has(id)) return;
+  closeConfirmation();
+  pending.add(id);
+  render();
+  try {
+    const reply = await ack(id);
+    acknowledged.set(id, reply);
+    status.textContent = 'Acknowledged ' + id;
+  } catch (error) {
+    status.textContent = 'Could not acknowledge ' + id + '. Please try again.';
+    console.error(error);
+  } finally {
+    pending.delete(id);
+    render();
+  }
+});
 
 function render() {
   const rows = incidents.slice().sort((a, b) => Date.parse(b.openedAt) - Date.parse(a.openedAt));
@@ -39,21 +68,11 @@ function render() {
       button.textContent = pending.has(incident.id) ? 'Acknowledging…' : 'Ack';
       button.disabled = pending.has(incident.id);
       button.setAttribute('aria-label', 'Ack ' + incident.id);
-      button.addEventListener('click', async () => {
+      button.addEventListener('click', () => {
         if (pending.has(incident.id)) return;
-        pending.add(incident.id);
-        render();
-        try {
-          const reply = await ack(incident.id);
-          acknowledged.set(incident.id, reply);
-          status.textContent = 'Acknowledged ' + incident.id;
-        } catch (error) {
-          status.textContent = 'Could not acknowledge ' + incident.id + '. Please try again.';
-          console.error(error);
-        } finally {
-          pending.delete(incident.id);
-          render();
-        }
+        confirmationTarget = incident.id;
+        confirmationText.textContent = 'Acknowledge incident ' + incident.id + '?';
+        confirmation.showModal();
       });
       row.append(button);
     }
