@@ -43,3 +43,5 @@ Every issue in `issues/` delivered, deployed to a public https address, and show
 ## Product decision after step one
 
 Product reviewed the recording at 00:19 and chose to retain R1 live ordering and per-row Ack. R2 now requires confirmation naming the incident ID. The incident data model and course API contract stay the same; confirmation holds only a temporary selected ID in browser memory.
+
+Refresh updates existing incident rows in place. Inserting an arrival must not destroy and recreate existing rows or their controls. The proxy preserves the course's `/api/incidents` and `/api/ack` paths so the supplied replay can observe the same flow.

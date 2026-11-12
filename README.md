@@ -5,14 +5,14 @@ course's incident API. Read `plan.md` first, then the four ready issues in `issu
 
 ## Run it
 
-1. Fill `app/config.js` with `api` and `session` from start-challenge.
-2. Serve `app/` with any static server: `npm run serve`.
-3. Deploy `app/` to your own public **https** address — any static host works (GitHub Pages, Cloudflare
-   Pages or Workers, Netlify, Vercel's production URL, …).
+1. Deploy `proxy.js` to Cloudflare Workers using `wrangler.jsonc`. Store the course session as an encrypted `COURSE_SESSION` secret on the Worker. Do not put it in public source or browser configuration.
+2. Set `app/config.js` to the Worker's public URL with an `/api` suffix. Leave the browser's `SESSION` empty. The proxy inserts the private session when forwarding incident and Ack requests to the course.
+3. Serve `app/` locally with `bun run serve`.
+4. The Deploy board GitHub Actions workflow publishes `app/` to GitHub Pages and stamps the commit SHA into the page metadata and footer. The proxy accepts browser calls from this GitHub Pages account's origin.
 
 ## The incident API
 
-Base = `api` from start-challenge. `api.js` already wraps both calls; keep using it.
+The course base is `api` from start-challenge. The browser uses the public proxy's `/api` base instead. `api.js` remains the supplied client; the proxy preserves the `/api/incidents` and `/api/ack` paths for the course replay.
 
 | call | answers |
 |------|---------|
