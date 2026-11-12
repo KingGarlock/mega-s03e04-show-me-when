@@ -1,0 +1,6 @@
+{
+  "name": "sched-prod-incident-board",
+  "private": true,
+  "type": "module",
+  "scripts": { "serve": "bun server.ts" }
+}

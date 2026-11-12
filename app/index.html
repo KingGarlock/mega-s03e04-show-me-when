@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="build" content="development" />
+    <title>sched-prod · incidents</title>
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <header>
+      <div><h1>Incident board</h1><p class="sub">sched-prod · tonight · newest first</p></div>
+      <p data-testid="updated-at" class="sub">Connecting…</p>
+    </header>
+    <main data-testid="board">
+      <p data-testid="loader">Loading incidents…</p>
+      <p data-testid="empty" hidden>No incidents tonight.</p>
+      <p role="status" aria-live="polite"></p>
+      <ul data-testid="incident-list" class="list" aria-label="Tonight's incidents"></ul>
+    </main>
+    <footer>Live updates every 2 seconds · Build <code data-testid="build-sha">development</code></footer>
+  </body>
+</html>
